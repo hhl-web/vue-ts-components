@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Table
+    <!-- <Table
       :data.sync="tableData"
       :isSort="isSort"
       :tableHeader="headerData"
@@ -21,14 +21,27 @@
         <el-pagination background layout="prev, pager, next" :total="1000">
         </el-pagination>
       </template>
-    </Table>
+    </Table> -->
+    <UploadXlsx
+      start="A"
+      end="H"
+      :headerStr="headerStr"
+      :callback="handlerRequest"
+    ></UploadXlsx>
   </div>
 </template>
 
 <script lang="ts">
 import { Input } from "element-ui";
 import { Component, Ref, Vue } from "vue-property-decorator";
-import { Table } from "./components/index.js";
+import { UploadXlsx } from "./components/index.js";
+const _headerStr = [
+  { str: "一级分类ID", key: "frontend_category_lv1", type: "number" },
+  { str: "二级分类ID", key: "frontend_category_lv2", type: "number" },
+  { str: "三级分类ID", key: "frontend_category_lv3", type: "number" },
+  { str: "商品名称", key: "product_name", type: "string" },
+  { str: "商品ID", key: "product_id", type: "number" },
+];
 const tableData = [
   {
     id: 1,
@@ -100,11 +113,12 @@ const tableData = [
 @Component({
   name: "App",
   components: {
-    Table,
+    UploadXlsx,
   },
 })
 export default class extends Vue {
   @Ref() table: any;
+  private headerStr = _headerStr;
   private headerData = [
     {
       name: "请选择",
@@ -168,7 +182,8 @@ export default class extends Vue {
         },
         {
           click: (row: any, i: any, btn: any, evt: any) => {
-            this.$refs.table.handlerEdit(btn, row, evt, "type");
+            let table: any = this.$refs.table;
+            table.handlerEdit(btn, row, evt, "type");
             //调用编辑的接口
           },
           label: "编辑",
@@ -208,6 +223,15 @@ export default class extends Vue {
   //处理选择框
   onSelectChange(rowArr: Array<any>) {
     console.log(rowArr, "---所选择的值");
+  }
+  handlerRequest(arg: any) {
+    setTimeout(() => {
+      console.log(arg, "arg");
+      return 1;
+    }, 2000);
+  }
+  mounted() {
+    console.log("挂载了");
   }
 }
 </script>
