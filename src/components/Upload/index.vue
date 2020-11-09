@@ -8,8 +8,8 @@
 <template>
   <div class="uploadContainer">
     <el-upload
-      class="upload"
       :ref="upload"
+      class="upload"
       name="file"
       with-credentials
       :on-change="onChangeHandler"
@@ -20,122 +20,124 @@
       :auto-upload="false"
       action=""
     >
-      <el-button type="primary">导入文件</el-button>
-      <slot name="tip"></slot>
+      <el-button type="primary">
+        导入文件
+      </el-button>
+      <slot name="tip" />
     </el-upload>
     <el-button
       type="primary"
       size="mini"
-      @click="uploadFile"
       style="height: 35px"
-      >上传</el-button
+      @click="uploadFile"
     >
+      上传
+    </el-button>
   </div>
 </template>
 <script lang="ts">
 // excel支持的格式
-const _SheetJSFT = ["xlsx", "xls"].map(function (x) {
-  return "." + x;
-});
-import {
-  Component,
-  Vue,
-  Watch,
-  Mixins,
-  Ref,
-  Prop,
-} from "vue-property-decorator";
-import UploadXlsx from "@/mixins/uploadXlsx";
-import { resolve } from "dns";
-import { reject } from "lodash";
-
-let upload = Symbol("upload");
+import { Component, Watch, Mixins, Ref, Prop } from 'vue-property-decorator'
+import UploadXlsx from '../../mixins/uploadXlsx'
+const _SheetJSFT = ['xlsx', 'xls'].map(function(x) {
+  return '.' + x
+})
+const upload = Symbol('upload')
 @Component({
-  name: "Upload",
+  name: 'Upload'
 })
 export default class extends Mixins(UploadXlsx) {
   @Prop({
     type: Array,
     default() {
-      return [];
-    },
+      return []
+    }
   })
   headerStr: any;
+
   @Prop({
     type: Function,
-    required: true,
+    required: true
   })
   callback!: Function;
+
   @Prop({
     type: String,
-    default: "A",
+    default: 'A'
   })
   start!: string;
+
   @Prop({
     type: String,
-    default: "",
+    default: ''
   })
   end!: string;
+
   @Prop({
     type: Boolean,
-    default: false,
+    default: false
   })
   multiple?: boolean;
+
   private SheetJSFT = _SheetJSFT;
   private fileList: any = [];
   private upload = upload;
-  //处理文件
+  // 处理文件
   handlerFile() {
     this.fileList.forEach((file: any) => {
-      let { name } = file;
-      let str = name.slice(name.lastIndexOf("."), name.length);
+      const { name } = file
+      const str = name.slice(name.lastIndexOf('.'), name.length)
       if (!this.SheetJSFT.includes(str)) {
         return this.$message({
-          type: "error",
-          message: "文件格式不符合要求,请检查文件格式",
-        });
+          type: 'error',
+          message: '文件格式不符合要求,请检查文件格式'
+        })
       }
       this.handlerReaderFile(file, this.headerStr, this.start, this.end)
         .then((res: any) => {
-          Promise.all(this.handlerCallback(res)).then((res) => {
-            console.log("res成功了", res); //输出3个1
-          });
+          Promise.all(this.handlerCallback(res)).then(res => {
+            console.log('res成功了', res) // 输出3个1
+          })
         })
         .catch((err: any) => {
           this.$message({
-            type: "error",
-            message: err,
-          });
-        });
-    });
+            type: 'error',
+            message: err
+          })
+        })
+    })
   }
-  //文件上传
+
+  // 文件上传
   uploadFile() {
-    this.handlerFile();
+    this.handlerFile()
   }
+
   // 只保留最后新选择的文件
   onChangeHandler(file: any, fileList: any) {
     if (this.multiple) {
-      this.fileList = fileList;
+      this.fileList = fileList
     } else {
       if (fileList.length > 1) {
-        this.fileList = [fileList[fileList.length - 1]];
+        this.fileList = [fileList[fileList.length - 1]]
       } else {
-        this.fileList = fileList;
+        this.fileList = fileList
       }
     }
   }
-  //处理callback
+
+  // 处理callback
   handlerCallback(args: any) {
     return args.map((arg: Array<any>) => {
       return new Promise((resolve, reject) => {
-        resolve(this.callback(arg));
-      });
-    });
+        resolve(this.callback(arg))
+      })
+    })
   }
-  //文件移除
+
+  // 文件移除
   handleRemove(file: any, fileList: any) {
-    this.fileList = fileList;
+    this.fileList = fileList
   }
 }
 </script>
