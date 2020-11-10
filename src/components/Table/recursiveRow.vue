@@ -127,9 +127,11 @@
                   v-for="(btn, i) in val.actions"
                   :key="`${btn.label}_${i}`"
                   v-bind="btn.attr"
-                  @click="btn.click(item, index, btn, $event)"
+                  @click="btn.click(item, index, $event)"
                   :disabled="btn.before ? btn.before(item, index) : false"
-                  >{{ btn.label }}</el-button
+                  >{{
+                    btn.edit ? (item._$edit ? "OK" : btn.label) : btn.label
+                  }}</el-button
                 ></template
               >
               <template v-else>

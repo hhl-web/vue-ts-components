@@ -40,7 +40,7 @@ const _headerStr = [
   { str: "二级分类ID", key: "frontend_category_lv2", type: "number" },
   { str: "三级分类ID", key: "frontend_category_lv3", type: "number" },
   { str: "商品名称", key: "product_name", type: "string" },
-  { str: "商品ID", key: "product_id", type: "number" },
+  { str: "商品ID", key: "product_id", type: "number" }
 ];
 const tableData = [
   {
@@ -58,7 +58,7 @@ const tableData = [
         type: "自然属性",
         manage_categories: "无",
         remark: "无",
-        children: [],
+        children: []
       },
       {
         id: 1 - 2,
@@ -75,7 +75,7 @@ const tableData = [
             type: "自然属性",
             manage_categories: "无",
             remark: "无",
-            children: [],
+            children: []
           },
           {
             id: 1 - 2 - 2,
@@ -84,11 +84,11 @@ const tableData = [
             type: "自然属性",
             manage_categories: "无",
             remark: "无",
-            children: [],
-          },
-        ],
-      },
-    ],
+            children: []
+          }
+        ]
+      }
+    ]
   },
   {
     id: 2,
@@ -105,18 +105,18 @@ const tableData = [
         type: "自然属性",
         manage_categories: "无",
         remark: "无",
-        children: [],
-      },
-    ],
-  },
+        children: []
+      }
+    ]
+  }
 ];
 import img from "./assets/imgs/green.png";
 @Component({
   name: "App",
   components: {
     UploadXlsx,
-    Table,
-  },
+    Table
+  }
 })
 export default class extends Vue {
   @Ref() table: any;
@@ -127,12 +127,12 @@ export default class extends Vue {
       props: "select",
       select: true,
       attr: {
-        size: "mini",
-      },
+        size: "mini"
+      }
     },
     {
       name: "ID",
-      props: "id",
+      props: "id"
     },
     {
       name: "名称",
@@ -142,23 +142,23 @@ export default class extends Vue {
       before: (row: any) => {
         if (row.level === 2) return `${row.text}（特殊）`;
         return `${row.text}`;
-      },
+      }
     },
     {
       name: "级别",
-      props: "level",
+      props: "level"
     },
     {
       name: "分类属性",
-      props: "type",
+      props: "type"
     },
     {
       name: "类别",
-      props: "manage_categories",
+      props: "manage_categories"
     },
     {
       name: "备注",
-      props: "remark",
+      props: "remark"
     },
     {
       name: "操作",
@@ -166,34 +166,36 @@ export default class extends Vue {
       actions: [
         {
           click: (row: any) => {
+            console.log(row, "row");
             const table: any = this.$refs.table;
             table.handlerDepDel(this.tableData, row.id);
             this.$message({
               type: `success`,
-              message: `${row.text}删除成功！`,
+              message: `${row.text}删除成功！`
             });
             //调删除接口
           },
           label: "删除",
           attr: {
-            size: "mini",
+            size: "mini"
           },
           before: (row: any, i: any) => {
             if (row.level === 2) {
               return true;
             }
-          },
+          }
         },
         {
-          click: (row: any, i: any, btn: any, evt: any) => {
+          click: (row: any, i: any, evt: any) => {
             const table: any = this.$refs.table;
-            table.handlerEdit(btn, row, evt, "type");
+            table.handlerEdit(row, evt, "type");
             //调用编辑的接口
           },
           label: "编辑",
+          edit: true,
           attr: {
-            size: "mini",
-          },
+            size: "mini"
+          }
         },
         {
           click: (row: any, i: any, evt: any) => {
@@ -201,11 +203,11 @@ export default class extends Vue {
           },
           label: "查看详情",
           attr: {
-            size: "mini",
-          },
-        },
-      ],
-    },
+            size: "mini"
+          }
+        }
+      ]
+    }
   ];
   private tableData = tableData;
   private isOpen = true;

@@ -68,9 +68,9 @@ export default class extends Vue {
    * evt：事件对象
    * expre：表格数据字段
    */
-  private handlerEdit(btn: any, row: any, evt: any, expre: string) {
-    if (btn.label === "编辑") {
-      btn.label = "关闭编辑";
+  private handlerEdit(row: any, evt: any, expre: string) {
+    if (!row._$edit) {
+      console.log(12);
       Object.assign(row, {
         isChange: expre,
         component: "input",
@@ -83,12 +83,13 @@ export default class extends Vue {
           }
         }
       });
+      this.$set(row, "_$edit", true);
     } else {
-      btn.label = "编辑";
       row[expre] = this.iptValue ? this.iptValue.target.value : row[expre];
       this.$delete(row, "component");
       this.$delete(row, "attr");
       this.$delete(row, "listener");
+      this.$set(row, "_$edit", false);
     }
   }
 }
