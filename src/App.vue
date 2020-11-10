@@ -235,9 +235,6 @@ export default class extends Vue {
     }, 2000);
   }
   mounted() {
-    // setTimeout(() => {
-    //   this.tableData = tableData;
-    // }, 5000);
     console.log("挂载了");
   }
 }
