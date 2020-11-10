@@ -32,19 +32,6 @@ module.exports = {
     },
     // 生产环境是否生成 sourceMap 文件
     productionSourceMap: sourceMap,
-    // css相关配置
-    css: {
-        // 是否使用css分离插件 ExtractTextPlugin
-        extract: true,
-        // 开启 CSS source maps?
-        sourceMap: false,
-        // css预设器配置项
-        loaderOptions: {},
-        // 设置为 false 后你就可以去掉文件名中的 .module 并将所有的 *.(css|scss|sass|less|styl(us)?)
-        requireModuleExtension: false,
-    },
-    // use thread-loader for babel & TS in production build
-    // enabled by default if the machine has more than 1 cores
     parallel: require("os").cpus().length > 1,
     // PWA 插件相关配置
     // see https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
