@@ -75,7 +75,7 @@
   <div
     :class="{
       body: tableData.length !== 0,
-      noData: tableData.length === 0,
+      noData: tableData.length === 0
     }"
     ref="$body"
   >
@@ -109,7 +109,7 @@
                 <i
                   :class="{
                     'el-icon-caret-bottom': item.isShowIcon,
-                    'el-icon-caret-right': !item.isShowIcon,
+                    'el-icon-caret-right': !item.isShowIcon
                   }"
                   v-if="iSShow(item.children)"
                   @click="onClick(item, $event)"
@@ -160,7 +160,7 @@ import Sortable from "sortablejs";
 import * as _ from "lodash";
 let $selectArr: any = [];
 @Component({
-  name: "recursiveRow",
+  name: "recursiveRow"
 })
 export default class extends Vue {
   @Ref() recursiveRow!: any;
@@ -169,27 +169,27 @@ export default class extends Vue {
     type: Array,
     default() {
       return [];
-    },
+    }
   })
   data?: [];
   @Prop({
     type: Boolean,
-    default: false,
+    default: false
   })
   isSort?: false;
   @Prop({
     type: Array,
-    default: () => [],
+    default: () => []
   })
   tableHeader: any;
   @Prop({
     type: Boolean,
-    default: false,
+    default: false
   })
   open: any;
   @Prop({
     type: Function,
-    default: () => {},
+    default: () => {}
   })
   callback?: Function;
   private tableData: any = [];
@@ -211,19 +211,19 @@ export default class extends Vue {
           // 结束拖拽
           onEnd: async function(this: any, evt: any = {}) {
             if (evt.oldIndex === evt.newIndex) return;
-            let row = this.tableData.splice(evt.oldIndex, 1);
+            const row = this.tableData.splice(evt.oldIndex, 1);
             this.tableData.splice(evt.newIndex, 0, row[0]);
             //同层级的id
-            let arr = this.tableData.map((item: any = {}) => item.id);
+            const arr = this.tableData.map((item: any = {}) => item.id);
             await this.callback(arr);
             this.$message({
               type: "success",
-              message: "拖拽排序成功",
+              message: "拖拽排序成功"
             });
           }.bind(this),
           onMove: function(evt: any = {}) {
             if (evt.dragged.id === evt.related.id) return false;
-          },
+          }
         });
     };
   }

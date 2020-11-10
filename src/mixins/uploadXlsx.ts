@@ -3,19 +3,19 @@ import * as XLSX from "xlsx";
 @Component
 export default class UploadXlsx extends Vue {
   handlerUploadResult(headerStr: Array<any>, data: Array<any>) {
-    let result: Array<any> = [];
+    const result: Array<any> = [];
     let arr: Array<any> = [];
     let obj: any = {};
-    let flag: boolean = false;
+    let flag = false;
     let idx: number;
     data.forEach((item: any) => {
       arr = Object.keys(item);
       headerStr.forEach((val: any) => {
-        if (!!arr.includes(val.str)) {
+        if (arr.includes(val.str)) {
           flag = true;
           idx = arr.indexOf(val.str);
         }
-        if (!!flag) {
+        if (flag) {
           if (val.type === "string") {
             Object.assign(obj, { [val.key]: String(item[arr[idx]]) });
           } else {
@@ -44,12 +44,12 @@ export default class UploadXlsx extends Vue {
     const reader = new FileReader();
     reader.readAsBinaryString(file.raw); // 读取文件
     return new Promise((resolve, reject) => {
-      let resultArr: any = [];
+      const resultArr: any = [];
       let count = 0;
 
       reader.onload = (evt: any) => {
         try {
-          let bstr = evt.target.result;
+          const bstr = evt.target.result;
           // 以二进制流方式读取得到整份excel表格对象
           const wb = XLSX.read(bstr, { type: "binary" });
           let ws: any, data, result;
@@ -66,7 +66,7 @@ export default class UploadXlsx extends Vue {
             if (!(~ws["!ref"].indexOf(start) && ~ws["!ref"].lastIndexOf(end))) {
               return this.$message({
                 type: "error",
-                message: `${file.name}表头数量不符合要求`,
+                message: `${file.name}表头数量不符合要求`
               });
             }
             result = this.handlerUploadResult(_headerStr, data);

@@ -33,10 +33,8 @@
 </template>
 
 <script lang="ts">
-import { Input } from "element-ui";
 import { Component, Ref, Vue } from "vue-property-decorator";
 import { Table, UploadXlsx } from "./components/index";
-
 const _headerStr = [
   { str: "一级分类ID", key: "frontend_category_lv1", type: "number" },
   { str: "二级分类ID", key: "frontend_category_lv2", type: "number" },
@@ -112,6 +110,7 @@ const tableData = [
     ],
   },
 ];
+import img from "./assets/imgs/green.png";
 @Component({
   name: "App",
   components: {
@@ -139,7 +138,7 @@ export default class extends Vue {
       name: "名称",
       props: "text",
       tree: true,
-      images: require("@/assets/imgs/green.png"),
+      images: img,
       before: (row: any) => {
         if (row.level === 2) return `${row.text}（特殊）`;
         return `${row.text}`;
@@ -167,7 +166,7 @@ export default class extends Vue {
       actions: [
         {
           click: (row: any) => {
-            let table: any = this.$refs.table;
+            const table: any = this.$refs.table;
             table.handlerDepDel(this.tableData, row.id);
             this.$message({
               type: `success`,
@@ -187,7 +186,7 @@ export default class extends Vue {
         },
         {
           click: (row: any, i: any, btn: any, evt: any) => {
-            let table: any = this.$refs.table;
+            const table: any = this.$refs.table;
             table.handlerEdit(btn, row, evt, "type");
             //调用编辑的接口
           },

@@ -30,8 +30,8 @@ import RecursiveRow from "./recursiveRow.vue";
 @Component({
   name: "Table",
   components: {
-    RecursiveRow,
-  },
+    RecursiveRow
+  }
 })
 export default class extends Vue {
   private iptValue: any;
@@ -57,7 +57,7 @@ export default class extends Vue {
   private openAllTree(bool: boolean) {
     let index = 0;
     while (this.$children[++index]) {
-      let el: any = this.$children[index];
+      const el: any = this.$children[index];
       if (el.$body) {
         el.allOpen(bool);
       }
@@ -75,13 +75,13 @@ export default class extends Vue {
         isChange: expre,
         component: "input",
         attr: {
-          value: row[expre],
+          value: row[expre]
         },
         listener: {
           ["change"]: (evt: any) => {
             this.iptValue = evt;
-          },
-        },
+          }
+        }
       });
     } else {
       btn.label = "编辑";

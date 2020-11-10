@@ -39,36 +39,36 @@ const _SheetJSFT = ["xlsx", "xls"].map(function(x) {
 });
 import { Component, Mixins, Ref, Prop } from "vue-property-decorator";
 import UploadXlsx from "../../mixins/uploadXlsx";
-let upload = Symbol("upload");
+const upload = Symbol("upload");
 @Component({
-  name: "Upload",
+  name: "Upload"
 })
 export default class extends Mixins(UploadXlsx) {
   @Prop({
     type: Array,
     default() {
       return [];
-    },
+    }
   })
   headerStr: any;
   @Prop({
     type: Function,
-    required: true,
+    required: true
   })
   callback!: Function;
   @Prop({
     type: String,
-    default: "A",
+    default: "A"
   })
   start!: string;
   @Prop({
     type: String,
-    default: "",
+    default: ""
   })
   end!: string;
   @Prop({
     type: Boolean,
-    default: false,
+    default: false
   })
   multiple?: boolean;
   private SheetJSFT = _SheetJSFT;
@@ -77,24 +77,24 @@ export default class extends Mixins(UploadXlsx) {
   //处理文件
   handlerFile() {
     this.fileList.forEach((file: any) => {
-      let { name } = file;
-      let str = name.slice(name.lastIndexOf("."), name.length);
+      const { name } = file;
+      const str = name.slice(name.lastIndexOf("."), name.length);
       if (!this.SheetJSFT.includes(str)) {
         return this.$message({
           type: "error",
-          message: "文件格式不符合要求,请检查文件格式",
+          message: "文件格式不符合要求,请检查文件格式"
         });
       }
       this.handlerReaderFile(file, this.headerStr, this.start, this.end)
         .then((res: any) => {
-          Promise.all(this.handlerCallback(res)).then((res) => {
+          Promise.all(this.handlerCallback(res)).then(res => {
             console.log("res成功了", res); //输出3个1
           });
         })
         .catch((err: any) => {
           this.$message({
             type: "error",
-            message: err,
+            message: err
           });
         });
     });
@@ -118,7 +118,7 @@ export default class extends Mixins(UploadXlsx) {
   //处理callback
   handlerCallback(args: any) {
     return args.map((arg: Array<any>) => {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         resolve(this.callback(arg));
       });
     });
