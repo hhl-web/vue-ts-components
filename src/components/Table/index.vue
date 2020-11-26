@@ -26,19 +26,32 @@
 import "./style/index.scss";
 import { Component, Vue, Watch, Mixins, Ref } from "vue-property-decorator";
 import RecursiveRow from "./recursiveRow.vue";
-
+import { EventBus } from "../index";
 @Component({
   name: "Table",
   components: {
-    RecursiveRow
-  }
+    RecursiveRow,
+  },
 })
 export default class extends Vue {
   private iptValue: any;
+  private allCheck: string = "";
   /**
    * arr：列表数据
    * id：当前要删除的数据的id
+   *
    */
+  mounted() {
+    EventBus.$on("select-change", (checkList: Array<any>) => {
+      this.$emit("select-change", checkList);
+    });
+    EventBus.$on("tree-change", (treeList: Array<any>) => {
+      this.$emit("tree-change", treeList);
+    });
+  }
+  beforeDestroy() {
+    EventBus.$off("select-change");
+  }
   private handlerDepDel(arr: any = [], id: number) {
     if (!Array.isArray(arr)) return;
     arr.forEach((item: any, index: number) => {
@@ -70,18 +83,17 @@ export default class extends Vue {
    */
   private handlerEdit(row: any, evt: any, expre: string) {
     if (!row._$edit) {
-      console.log(12);
       Object.assign(row, {
         isChange: expre,
         component: "input",
         attr: {
-          value: row[expre]
+          value: row[expre],
         },
         listener: {
           ["change"]: (evt: any) => {
             this.iptValue = evt;
-          }
-        }
+          },
+        },
       });
       this.$set(row, "_$edit", true);
     } else {

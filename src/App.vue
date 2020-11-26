@@ -8,6 +8,7 @@
       ref="table"
       :callback="getTableData"
       @select-change="onSelectChange"
+      @tree-change="onTreeChange"
       :loading="loading"
     >
       <template v-slot:header>
@@ -40,7 +41,7 @@ const _headerStr = [
   { str: "二级分类ID", key: "frontend_category_lv2", type: "number" },
   { str: "三级分类ID", key: "frontend_category_lv3", type: "number" },
   { str: "商品名称", key: "product_name", type: "string" },
-  { str: "商品ID", key: "product_id", type: "number" }
+  { str: "商品ID", key: "product_id", type: "number" },
 ];
 const tableData = [
   {
@@ -58,7 +59,8 @@ const tableData = [
         type: "自然属性",
         manage_categories: "无",
         remark: "无",
-        children: []
+        children: [],
+        parent_id: 1,
       },
       {
         id: 1 - 2,
@@ -67,6 +69,7 @@ const tableData = [
         type: "自然属性",
         manage_categories: "无",
         remark: "无",
+        parent_id: 1,
         children: [
           {
             id: 1 - 2 - 1,
@@ -75,7 +78,8 @@ const tableData = [
             type: "自然属性",
             manage_categories: "无",
             remark: "无",
-            children: []
+            children: [],
+            parent_id: 1 - 2,
           },
           {
             id: 1 - 2 - 2,
@@ -84,11 +88,12 @@ const tableData = [
             type: "自然属性",
             manage_categories: "无",
             remark: "无",
-            children: []
-          }
-        ]
-      }
-    ]
+            children: [],
+            parent_id: 1 - 2,
+          },
+        ],
+      },
+    ],
   },
   {
     id: 2,
@@ -97,6 +102,7 @@ const tableData = [
     type: "分类属性",
     manage_categories: "无",
     remark: "无",
+
     children: [
       {
         id: 2 - 1,
@@ -105,34 +111,35 @@ const tableData = [
         type: "自然属性",
         manage_categories: "无",
         remark: "无",
-        children: []
-      }
-    ]
-  }
+        children: [],
+        parent_id: 2,
+      },
+    ],
+  },
 ];
 import img from "./assets/imgs/green.png";
 @Component({
   name: "App",
   components: {
     UploadXlsx,
-    Table
-  }
+    Table,
+  },
 })
 export default class extends Vue {
   @Ref() table: any;
   private headerStr = _headerStr;
   private headerData = [
     {
-      name: "请选择",
+      name: "单选",
       props: "select",
       select: true,
       attr: {
-        size: "mini"
-      }
+        size: "mini",
+      },
     },
     {
       name: "ID",
-      props: "id"
+      props: "id",
     },
     {
       name: "名称",
@@ -142,23 +149,23 @@ export default class extends Vue {
       before: (row: any) => {
         if (row.level === 2) return `${row.text}（特殊）`;
         return `${row.text}`;
-      }
+      },
     },
     {
       name: "级别",
-      props: "level"
+      props: "level",
     },
     {
       name: "分类属性",
-      props: "type"
+      props: "type",
     },
     {
       name: "类别",
-      props: "manage_categories"
+      props: "manage_categories",
     },
     {
       name: "备注",
-      props: "remark"
+      props: "remark",
     },
     {
       name: "操作",
@@ -171,19 +178,19 @@ export default class extends Vue {
             table.handlerDepDel(this.tableData, row.id);
             this.$message({
               type: `success`,
-              message: `${row.text}删除成功！`
+              message: `${row.text}删除成功！`,
             });
             //调删除接口
           },
           label: "删除",
           attr: {
-            size: "mini"
+            size: "mini",
           },
           before: (row: any, i: any) => {
             if (row.level === 2) {
               return true;
             }
-          }
+          },
         },
         {
           click: (row: any, i: any, evt: any) => {
@@ -194,8 +201,8 @@ export default class extends Vue {
           label: "编辑",
           edit: true,
           attr: {
-            size: "mini"
-          }
+            size: "mini",
+          },
         },
         {
           click: (row: any, i: any, evt: any) => {
@@ -203,11 +210,11 @@ export default class extends Vue {
           },
           label: "查看详情",
           attr: {
-            size: "mini"
-          }
-        }
-      ]
-    }
+            size: "mini",
+          },
+        },
+      ],
+    },
   ];
   private tableData = tableData;
   private isOpen = true;
@@ -228,7 +235,11 @@ export default class extends Vue {
   }
   //处理选择框
   onSelectChange(rowArr: Array<any>) {
-    console.log(rowArr, "---所选择的值");
+    console.log("---所选择的值");
+  }
+  //树选中
+  onTreeChange(list: Array<any>) {
+    console.log(list);
   }
   handlerRequest(arg: any) {
     setTimeout(() => {

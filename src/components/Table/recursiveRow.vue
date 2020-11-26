@@ -69,13 +69,16 @@
   .tree-bg {
     background: #e1e1e173;
   }
+  /deep/.el-checkbox {
+    margin-right: 10px;
+  }
 }
 </style>
 <template>
   <div
     :class="{
       body: tableData.length !== 0,
-      noData: tableData.length === 0
+      noData: tableData.length === 0,
     }"
     ref="$body"
   >
@@ -90,8 +93,8 @@
             <component
               :is="
                 val.component ||
-                  (item.isChange == val.props ? item.component : false) ||
-                  'div'
+                (item.isChange == val.props ? item.component : false) ||
+                'div'
               "
               :key="val.props"
               :class="{ cell: true, [`cell_${i}`]: true }"
@@ -109,12 +112,17 @@
                 <i
                   :class="{
                     'el-icon-caret-bottom': item.isShowIcon,
-                    'el-icon-caret-right': !item.isShowIcon
+                    'el-icon-caret-right': !item.isShowIcon,
                   }"
                   v-if="iSShow(item.children)"
                   @click="onClick(item, $event)"
                 ></i>
                 <i v-else class="operator"></i>
+                <el-checkbox
+                  v-bind="val.attr"
+                  v-model="item.treeSelectVal"
+                  @change="handlerAllTreeSelection(item, $event)"
+                ></el-checkbox>
                 <img
                   :src="val.images || `@/assets/imgs/green.png`"
                   class="tool"
@@ -158,11 +166,12 @@
 <script lang="ts">
 import "./style/index.scss";
 import { Component, Vue, Prop, Watch, Ref } from "vue-property-decorator";
+import { EventBus } from "../index";
 import Sortable from "sortablejs";
 import * as _ from "lodash";
 let $selectArr: any = [];
 @Component({
-  name: "recursiveRow"
+  name: "recursiveRow",
 })
 export default class extends Vue {
   @Ref() recursiveRow!: any;
@@ -171,33 +180,35 @@ export default class extends Vue {
     type: Array,
     default() {
       return [];
-    }
+    },
   })
   data?: [];
   @Prop({
     type: Boolean,
-    default: false
+    default: false,
   })
   isSort?: false;
   @Prop({
     type: Array,
-    default: () => []
+    default: () => [],
   })
   tableHeader: any;
   @Prop({
     type: Boolean,
-    default: false
+    default: false,
   })
   open: any;
   @Prop({
     type: Function,
-    default: () => {}
+    default: () => {},
   })
   callback?: Function;
   private tableData: any = [];
   private sortable: any = {};
   private selectArr: any = [];
   private handlerSort: Function = () => {};
+  private selectVal = [];
+
   mounted() {
     this.handlerSort = () => {
       if (this.isSort === false) {
@@ -211,7 +222,7 @@ export default class extends Vue {
         _$el &&
         new Sortable(_$el, {
           // 结束拖拽
-          onEnd: async function(this: any, evt: any = {}) {
+          onEnd: async function (this: any, evt: any = {}) {
             if (evt.oldIndex === evt.newIndex) return;
             const row = this.tableData.splice(evt.oldIndex, 1);
             this.tableData.splice(evt.newIndex, 0, row[0]);
@@ -220,14 +231,22 @@ export default class extends Vue {
             await this.callback(arr);
             this.$message({
               type: "success",
-              message: "拖拽排序成功"
+              message: "拖拽排序成功",
             });
           }.bind(this),
-          onMove: function(evt: any = {}) {
+          onMove: function (evt: any = {}) {
             if (evt.dragged.id === evt.related.id) return false;
-          }
+          },
         });
     };
+  }
+  beforeDestroy() {
+    EventBus.$off("select-change");
+  }
+
+  private handlerAllTreeSelection(row: any, bool: boolean) {
+    this.handlerTreeSelect(row, bool);
+    EventBus.$emit("tree-change", [{ ...row }]);
   }
   private handlerSelection(row: any, bool: boolean) {
     if (bool) {
@@ -235,7 +254,7 @@ export default class extends Vue {
     } else {
       $selectArr = $selectArr.filter((rw: any) => rw.id !== row.id);
     }
-    this.$emit("select-change", $selectArr);
+    EventBus.$emit("select-change", $selectArr);
   }
   private iSShow(children: Array<any>) {
     if (children && children.length) {
@@ -267,6 +286,17 @@ export default class extends Vue {
     Array.isArray(arr) &&
       arr.forEach((item: any) => {
         this.$set(item, "isShowIcon", expand);
+      });
+  }
+  //用来处理是否全选
+  private handlerTreeSelect(row: any, expand: boolean) {
+    this.$set(row, "treeSelectVal", expand);
+    row.children &&
+      row.children.forEach((item: any) => {
+        if (item.children && item.children.length !== 0) {
+          this.handlerTreeSelect(item, expand);
+        }
+        this.$set(item, "treeSelectVal", expand);
       });
   }
   @Watch("data", { deep: true, immediate: true })
