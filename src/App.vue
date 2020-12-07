@@ -40,7 +40,7 @@ const data = [
         children: [
           {
             text: "导航",
-            id: 2.1,
+            id: 2.11,
           },
         ],
       },
@@ -73,7 +73,7 @@ const data = [
 })
 export default class extends Vue {
   private data = data;
-  private selelt = "";
+  private selelt = 2.1;
   @Watch("selelt")
   handler(newVal: any) {
     console.log(newVal);

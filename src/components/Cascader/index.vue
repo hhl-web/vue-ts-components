@@ -59,6 +59,7 @@ ul {
   </div>
 </template>
 <script lang="ts">
+import { Tag } from "element-ui";
 import {
   Component,
   Mixins,
@@ -68,7 +69,6 @@ import {
   Watch,
 } from "vue-property-decorator";
 import { CascaderItem } from "./components/index";
-import Node from "./components/node";
 @Component({
   name: "Cascader",
   components: {
@@ -85,7 +85,7 @@ export default class extends Vue {
   options: any;
 
   @Prop()
-  value: any;
+  value: Array<any> | any;
 
   @Prop({
     type: Object,
@@ -126,6 +126,7 @@ export default class extends Vue {
   //更新数据
   onUpdateSelected(newVal: any, flag: boolean) {
     this.selected = newVal;
+    console.log(newVal, "new", this.source);
     this.handleProps();
   }
 
@@ -140,20 +141,7 @@ export default class extends Vue {
   handleMapSelected(prop: string) {
     return this.selected.map((item: any) => item[prop]);
   }
-  //对数据添加checked属性
-  //   handleSource(data: any) {
-  //     let ary = JSON.parse(JSON.stringify(data));
-  //     if (!Array.isArray(ary)) return;
-  //     return ary.map((item: any) => {
-  //       this.$set(item, "checked", false);
-
-  //       if (item.children && item.children.length > 0) {
-  //         item["children"] = this.handleSource(item.children);
-  //       }
-  //       return { ...item };
-  //     });
-  //   }
-  //搜索数据
+  //广度搜索数据
   handleLabelToPath(args: any) {
     let baseArr = JSON.parse(JSON.stringify(args));
     let index = 0;
@@ -167,17 +155,21 @@ export default class extends Vue {
     }
     return arr;
   }
-  //原始数据新增pathObj属性和checked数据
-  handleNodeToPath() {
-    let arr = JSON.parse(JSON.stringify(this.options));
+  //串行遍历原始数据新增pathObj属性和checked数据
+  handleNodeToPath(data: any, bool: boolean, idVal: any) {
+    let arr = JSON.parse(JSON.stringify(data));
     let _this = this;
     noop(arr, "", "");
     function noop(child: any, text: string, idPath: string) {
-      return child.map((val: any) => {
-        _this.$set(val, "checked", false);
+      return child.forEach((val: any, index: number) => {
         const path = text + val.text + "/";
         const id = idPath + val.id + "/";
         val.pathObj = { labelPath: path.slice(0, -1), id: id.slice(0, -1) };
+        if (idVal === val.id) {
+          _this.$set(val, "checked", !bool);
+        } else {
+          _this.$set(val, "checked", bool);
+        }
         if (val.children && val.children.length !== 0) {
           noop(val.children, path, id);
         }
@@ -185,10 +177,36 @@ export default class extends Vue {
     }
     return arr;
   }
+  //处理映射
+  handleMapId(id: any, parentData: any, data: any) {
+    let target: any = [];
+    let index = 0;
+    while (index <= data.length - 1) {
+      if (data[index].id === id) {
+        target = target.concat(parentData, data[index]);
+        break;
+      }
+      if (data[index].children && data[index].children.length !== 0) {
+        parentData.push(data[index]);
+        target = target.concat(
+          this.handleMapId(id, parentData, data[index].children)
+        );
+        parentData = [];
+      }
+      ++index;
+    }
+    return target;
+  }
   //初始化数据
   initSate() {
-    const ary = (this.source = this.handleNodeToPath());
+    const ary = (this.source = this.handleNodeToPath(
+      this.options,
+      false,
+      this.value
+    ));
     this.filterableOpt = this.filterableSource = this.handleLabelToPath(ary);
+    this.selected = this.handleMapId(this.value, [], this.source);
+    this.val = this.handleMapSelected(this.props.label).join("/");
   }
   //点击li的值
   onClickOpt(item: any) {
