@@ -23,20 +23,14 @@ ul {
       :style="{ 'max-width': `${width}px` }"
       v-bind="iptProps"
       @input="onInput"
+      @clear="onClear"
     >
+      <template slot="append">
+        <i class="el-icon-arrow-down" v-if="downOrup"></i>
+        <i v-else class="el-icon-arrow-up"></i>
+      </template>
     </el-input>
-    <i
-      class="el-icon-arrow-down"
-      :style="{ position: 'relative', left: '-25px' }"
-      v-if="downOrup"
-    ></i>
-    <i
-      v-else
-      class="el-icon-arrow-up"
-      :style="{ position: 'relative', left: '-25px' }"
-    ></i>
     <el-popover ref="popover" id="popover" v-model="visiablePopover">
-      <!-- <div> -->
       <ul v-if="getShowFilter">
         <li
           v-for="(item, index) in filterableOpt"
@@ -46,7 +40,6 @@ ul {
           {{ item.labelPath }}
         </li>
       </ul>
-      <!-- </div> -->
       <CascaderItem
         v-else
         :options="source"
@@ -59,7 +52,6 @@ ul {
   </div>
 </template>
 <script lang="ts">
-import { Tag } from "element-ui";
 import {
   Component,
   Mixins,
@@ -123,6 +115,12 @@ export default class extends Vue {
   private visiablePopover = false;
   private filterableOpt: any = [];
   private filterableSource: any = [];
+  //清除
+  onClear() {
+    this.initSate();
+    this.$emit("input", []);
+    this.$emit("onChange", []);
+  }
   //更新数据
   onUpdateSelected(newVal: any, flag: boolean) {
     this.selected = newVal;
@@ -135,6 +133,7 @@ export default class extends Vue {
     this.val = this.handleMapSelected(this.props.label).join("/");
     const selectValId = this.handleMapSelected(this.props.value);
     this.$emit("input", selectValId);
+    this.$emit("onChange", selectValId);
   }
 
   //处理数据
