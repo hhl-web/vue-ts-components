@@ -115,11 +115,7 @@ export default class extends Vue {
     let lastIdx = this.selected.length - 1;
     let lastSelected = this.selected[lastIdx];
     if (lastSelected) {
-      if (bool) {
-        lastSelected["checked"] = false;
-      } else {
-        lastSelected["checked"] = true;
-      }
+       lastSelected["checked"] = !bool;
     }
   }
   //反选的数据处理

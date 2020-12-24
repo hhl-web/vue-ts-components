@@ -227,11 +227,7 @@ export default class extends Vue {
   }
   //显示up or down
   get downOrup() {
-    if (this.visiablePopover) {
-      return false;
-    } else {
-      return true;
-    }
+    return !this.visiablePopover;
   }
   get getShowFilter() {
     if (this.filterable && this.filterableVal) {
