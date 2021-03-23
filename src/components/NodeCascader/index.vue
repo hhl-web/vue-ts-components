@@ -3,11 +3,11 @@
     <div class="node-header">
       <el-input></el-input>
     </div>
-   <div class="node-content">
+    <div class="node-content">
       <template v-for="(item, index) in options">
         <nodeItem :node="item" :key="index"></nodeItem>
       </template>
-   </div>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -17,32 +17,30 @@ import {
   Ref,
   Prop,
   Vue,
-  Watch,
+  Watch
 } from "vue-property-decorator";
-import nodeItem from './components/node-item.vue';
+import nodeItem from "./components/node-item.vue";
 @Component({
   name: "nodeCascader",
   components: {
     nodeItem
-  },
+  }
 })
 export default class extends Vue {
   @Prop({
-    type:Array,
-    default:()=>[]
+    type: Array,
+    default: () => []
   })
-  options:any
+  options: any;
 }
 </script>
 <style lang="scss" scoped>
-.node-containor{
+.node-containor {
   display: flex;
   flex-direction: column;
-  .node-header{
-
+  .node-header {
   }
-  .node-content{
-
+  .node-content {
   }
 }
 </style>

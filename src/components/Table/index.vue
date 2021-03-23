@@ -30,12 +30,12 @@ import { EventBus } from "../index";
 @Component({
   name: "Table",
   components: {
-    RecursiveRow,
-  },
+    RecursiveRow
+  }
 })
 export default class extends Vue {
   private iptValue: any;
-  private allCheck: string = "";
+  private allCheck = "";
   /**
    * arr：列表数据
    * id：当前要删除的数据的id
@@ -80,6 +80,7 @@ export default class extends Vue {
    * row：每行的数据
    * evt：事件对象
    * expre：表格数据字段
+   * isChange:属性服务于动态组件component
    */
   private handlerEdit(row: any, evt: any, expre: string) {
     if (!row._$edit) {
@@ -87,13 +88,13 @@ export default class extends Vue {
         isChange: expre,
         component: "input",
         attr: {
-          value: row[expre],
+          value: row[expre]
         },
         listener: {
           ["change"]: (evt: any) => {
             this.iptValue = evt;
-          },
-        },
+          }
+        }
       });
       this.$set(row, "_$edit", true);
     } else {

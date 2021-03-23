@@ -37,7 +37,7 @@
 const _SheetJSFT = ["xlsx", "xls"].map(function(x) {
   return "." + x;
 });
-import { Component, Mixins, Ref, Prop } from "vue-property-decorator";
+import { Component, Mixins, Prop } from "vue-property-decorator";
 import UploadXlsx from "../../mixins/uploadXlsx";
 const upload = Symbol("upload");
 @Component({
@@ -80,10 +80,11 @@ export default class extends Mixins(UploadXlsx) {
       const { name } = file;
       const str = name.slice(name.lastIndexOf("."), name.length);
       if (!this.SheetJSFT.includes(str)) {
-        return this.$message({
+        this.$message({
           type: "error",
           message: "文件格式不符合要求,请检查文件格式"
         });
+        return;
       }
       this.handlerReaderFile(file, this.headerStr, this.start, this.end)
         .then((res: any) => {

@@ -1,10 +1,13 @@
 <template>
   <div class="filter-item">
-    <span 
+    <span
       class="filter-label"
       v-for="(item, index) in filterableOpt"
       :key="index"
-      @click="onClickOpt(item)"> {{ item.labelPath }}</span>
+      @click="onClickOpt(item)"
+    >
+      {{ item.labelPath }}</span
+    >
   </div>
 </template>
 <script lang="ts">
@@ -14,33 +17,31 @@ import {
   Ref,
   Prop,
   Vue,
-  Watch,
+  Watch
 } from "vue-property-decorator";
 @Component({
-  name: "filterItem",
-
+  name: "filterItem"
 })
 export default class extends Vue {
-
   @Prop({
-    type:Array,
-    default:()=>[]
+    type: Array,
+    default: () => []
   })
-  filterableOpt:any;
+  filterableOpt: any;
 
-  onClickOpt(item:any){
-    this.$emit('onClickOpt',item)
+  onClickOpt(item: any) {
+    this.$emit("onClickOpt", item);
   }
 }
 </script>
 <style lang="scss" scoped>
-.filter-item{
-    display: flex;
-    flex-direction: column;
-    width: 200px;
-    .filter-label{
-      height: 28px;
-      cursor: pointer;
-    }
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  .filter-label {
+    height: 28px;
+    cursor: pointer;
   }
+}
 </style>

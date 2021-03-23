@@ -24,148 +24,61 @@
         </el-pagination>
       </template>
     </Table>
-    <!-- <UploadXlsx
-      start="A"
-      end="H"
-      :headerStr="headerStr"
-      :callback="handlerRequest"
-    ></UploadXlsx> -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Ref, Vue } from "vue-property-decorator";
-import { Table, UploadXlsx } from "./components/index";
-const _headerStr = [
-  { str: "一级分类ID", key: "frontend_category_lv1", type: "number" },
-  { str: "二级分类ID", key: "frontend_category_lv2", type: "number" },
-  { str: "三级分类ID", key: "frontend_category_lv3", type: "number" },
-  { str: "商品名称", key: "product_name", type: "string" },
-  { str: "商品ID", key: "product_id", type: "number" },
-];
-const tableData = [
-  {
-    id: 1,
-    text: "父1",
-    level: 1,
-    type: "自然属性",
-    manage_categories: "无",
-    remark: "无",
-    children: [
-      {
-        id: 1 - 1,
-        text: "子1",
-        level: 2,
-        type: "自然属性",
-        manage_categories: "无",
-        remark: "无",
-        children: [],
-        parent_id: 1,
-      },
-      {
-        id: 1 - 2,
-        text: "子2",
-        level: 2,
-        type: "自然属性",
-        manage_categories: "无",
-        remark: "无",
-        parent_id: 1,
-        children: [
-          {
-            id: 1 - 2 - 1,
-            text: "子2-子1",
-            level: 3,
-            type: "自然属性",
-            manage_categories: "无",
-            remark: "无",
-            children: [],
-            parent_id: 1 - 2,
-          },
-          {
-            id: 1 - 2 - 2,
-            text: "子2-子2",
-            level: 3,
-            type: "自然属性",
-            manage_categories: "无",
-            remark: "无",
-            children: [],
-            parent_id: 1 - 2,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    text: "父2",
-    level: 1,
-    type: "分类属性",
-    manage_categories: "无",
-    remark: "无",
-
-    children: [
-      {
-        id: 2 - 1,
-        text: "父-子1",
-        level: 2,
-        type: "自然属性",
-        manage_categories: "无",
-        remark: "无",
-        children: [],
-        parent_id: 2,
-      },
-    ],
-  },
-];
-import img from "./assets/imgs/green.png";
+import { Table } from "../../components/index";
+import { tableData } from "../../mock/table/index.js";
+import img from "../../assets/imgs/green.png";
 @Component({
   name: "App",
   components: {
-    UploadXlsx,
-    Table,
-  },
+    Table
+  }
 })
 export default class extends Vue {
   @Ref() table: any;
-  private headerStr = _headerStr;
   private headerData = [
     {
       name: "单选",
       props: "select",
       select: true,
       attr: {
-        size: "mini",
-      },
+        size: "mini"
+      }
     },
     {
       name: "ID",
-      props: "id",
+      props: "id"
     },
     {
       name: "名称",
       props: "text",
       tree: true,
+      treeSelect: true,
       images: img,
       before: (row: any) => {
         if (row.level === 2) return `${row.text}（特殊）`;
         return `${row.text}`;
-      },
+      }
     },
     {
       name: "级别",
-      props: "level",
+      props: "level"
     },
     {
       name: "分类属性",
-      props: "type",
+      props: "type"
     },
     {
       name: "类别",
-      props: "manage_categories",
+      props: "manage_categories"
     },
     {
       name: "备注",
-      props: "remark",
+      props: "remark"
     },
     {
       name: "操作",
@@ -173,24 +86,23 @@ export default class extends Vue {
       actions: [
         {
           click: (row: any) => {
-            console.log(row, "row");
             const table: any = this.$refs.table;
             table.handlerDepDel(this.tableData, row.id);
+            //调删除接口
             this.$message({
               type: `success`,
-              message: `${row.text}删除成功！`,
+              message: `${row.text}删除成功！`
             });
-            //调删除接口
           },
           label: "删除",
           attr: {
-            size: "mini",
+            size: "mini"
           },
           before: (row: any, i: any) => {
             if (row.level === 2) {
               return true;
             }
-          },
+          }
         },
         {
           click: (row: any, i: any, evt: any) => {
@@ -201,8 +113,8 @@ export default class extends Vue {
           label: "编辑",
           edit: true,
           attr: {
-            size: "mini",
-          },
+            size: "mini"
+          }
         },
         {
           click: (row: any, i: any, evt: any) => {
@@ -210,11 +122,11 @@ export default class extends Vue {
           },
           label: "查看详情",
           attr: {
-            size: "mini",
-          },
-        },
-      ],
-    },
+            size: "mini"
+          }
+        }
+      ]
+    }
   ];
   private tableData = tableData;
   private isOpen = true;
@@ -240,15 +152,6 @@ export default class extends Vue {
   //树选中
   onTreeChange(list: Array<any>) {
     console.log(list);
-  }
-  handlerRequest(arg: any) {
-    setTimeout(() => {
-      console.log(arg, "arg");
-      return 1;
-    }, 2000);
-  }
-  mounted() {
-    console.log("挂载了");
   }
 }
 </script>

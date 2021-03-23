@@ -1,2 +1,2 @@
-import nodeItem from './node-item.vue';
-export {nodeItem};
+import nodeItem from "./node-item.vue";
+export { nodeItem };

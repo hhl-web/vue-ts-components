@@ -78,7 +78,7 @@
   <div
     :class="{
       body: tableData.length !== 0,
-      noData: tableData.length === 0,
+      noData: tableData.length === 0
     }"
     ref="$body"
   >
@@ -93,8 +93,8 @@
             <component
               :is="
                 val.component ||
-                (item.isChange == val.props ? item.component : false) ||
-                'div'
+                  (item.isChange == val.props ? item.component : false) ||
+                  'div'
               "
               :key="val.props"
               :class="{ cell: true, [`cell_${i}`]: true }"
@@ -112,16 +112,17 @@
                 <i
                   :class="{
                     'el-icon-caret-bottom': item.isShowIcon,
-                    'el-icon-caret-right': !item.isShowIcon,
+                    'el-icon-caret-right': !item.isShowIcon
                   }"
                   v-if="iSShow(item.children)"
                   @click="onClick(item, $event)"
                 ></i>
                 <i v-else class="operator"></i>
                 <el-checkbox
+                  v-if="val.treeSelect"
                   v-bind="val.attr"
                   v-model="item.treeSelectVal"
-                  @change="handlerAllTreeSelection(item, $event)"
+                  @change="handlerAllTreeSelection(item, bool)"
                 ></el-checkbox>
                 <img
                   :src="val.images || `@/assets/imgs/green.png`"
@@ -171,7 +172,7 @@ import Sortable from "sortablejs";
 import * as _ from "lodash";
 let $selectArr: any = [];
 @Component({
-  name: "recursiveRow",
+  name: "recursiveRow"
 })
 export default class extends Vue {
   @Ref() recursiveRow!: any;
@@ -180,27 +181,27 @@ export default class extends Vue {
     type: Array,
     default() {
       return [];
-    },
+    }
   })
   data?: [];
   @Prop({
     type: Boolean,
-    default: false,
+    default: false
   })
   isSort?: false;
   @Prop({
     type: Array,
-    default: () => [],
+    default: () => []
   })
   tableHeader: any;
   @Prop({
     type: Boolean,
-    default: false,
+    default: false
   })
   open: any;
   @Prop({
     type: Function,
-    default: () => {},
+    default: () => {}
   })
   callback?: Function;
   private tableData: any = [];
@@ -222,7 +223,7 @@ export default class extends Vue {
         _$el &&
         new Sortable(_$el, {
           // 结束拖拽
-          onEnd: async function (this: any, evt: any = {}) {
+          onEnd: async function(this: any, evt: any = {}) {
             if (evt.oldIndex === evt.newIndex) return;
             const row = this.tableData.splice(evt.oldIndex, 1);
             this.tableData.splice(evt.newIndex, 0, row[0]);
@@ -231,12 +232,12 @@ export default class extends Vue {
             await this.callback(arr);
             this.$message({
               type: "success",
-              message: "拖拽排序成功",
+              message: "拖拽排序成功"
             });
           }.bind(this),
-          onMove: function (evt: any = {}) {
+          onMove: function(evt: any = {}) {
             if (evt.dragged.id === evt.related.id) return false;
-          },
+          }
         });
     };
   }
@@ -305,7 +306,7 @@ export default class extends Vue {
     this.handlerTableData(this.tableData, this.open);
   }
   @Watch("isSort")
-  handlerIsSort(newValue: boolean) {
+  handlerIsSort() {
     this.handlerSort();
   }
 }

@@ -2,33 +2,38 @@
   <div class="cascader-item">
     <div class="left">
       <div class="search" v-if="isInput">
-        <el-input size="mini" placeholder="请输入名称搜索" v-model="searchVal" @input="handleInput" ></el-input>
+        <el-input
+          size="mini"
+          placeholder="请输入名称搜索"
+          v-model="searchVal"
+          @input="handleInput"
+        ></el-input>
       </div>
       <div class="item-content">
         <template v-for="(item, index) in panelData">
-        <div
-          :key="`${index}_text`"
-          class="label-item cursor"
-          :class="{active:handlerActive(item)}"
-          @click="onClickText(item, $event)"
-        >
-          <div class="label">
-            <template v-if="isCheckbox">
-              <input
-                type="checkbox"
-                v-model="item.checked"
-                class="cursor"
-                id="checked"
-              />
-            <label for="checked"></label>
-            </template>
-            <span class="label">{{ item.text }}</span>
+          <div
+            :key="`${index}_text`"
+            class="label-item cursor"
+            :class="{ active: handlerActive(item) }"
+            @click="onClickText(item, $event)"
+          >
+            <div class="label">
+              <template v-if="isCheckbox">
+                <input
+                  type="checkbox"
+                  v-model="item.checked"
+                  class="cursor"
+                  id="checked"
+                />
+                <label for="checked"></label>
+              </template>
+              <span class="label">{{ item.text }}</span>
+            </div>
+            <i
+              class="el-icon-arrow-right"
+              v-if="item.children && item.children.length !== 0"
+            ></i>
           </div>
-          <i
-            class="el-icon-arrow-right"
-            v-if="item.children && item.children.length !== 0"
-          ></i>
-        </div>
         </template>
       </div>
     </div>
@@ -52,79 +57,81 @@ import {
   Ref,
   Prop,
   Vue,
-  Watch,
+  Watch
 } from "vue-property-decorator";
 @Component({
-  name: "CascaderItem",
+  name: "CascaderItem"
 })
 export default class extends Vue {
   @Prop({
     type: Array,
     default() {
       return [];
-    },
+    }
   })
   options: any;
   @Prop({
     type: Number,
-    default: 0,
+    default: 0
   })
   level: any;
   @Prop({
     type: String,
-    default: "",
+    default: ""
   })
   changeValToStr: any;
   @Prop({
     type: Array,
     default() {
       return [];
-    },
+    }
   })
   selected: any;
   @Prop({
-    type:Boolean,
-    default:false
+    type: Boolean,
+    default: false
   })
-  isCheckbox:any;
+  isCheckbox: any;
   @Prop({
-    type:Boolean,
-    default:false
+    type: Boolean,
+    default: false
   })
-  isInput:any;
+  isInput: any;
 
   @Prop({
-    type:Boolean,
-    default:false
+    type: Boolean,
+    default: false
   })
-  reverseChoice:any;
+  reverseChoice: any;
 
-  private searchVal='';
-  private panelData=[];
-  private initOptions=true;
+  private searchVal = "";
+  private panelData = [];
+  private initOptions = true;
 
   //处理input事件
-  handleInput(evt:any){
-    if(this.searchVal){
-      this.panelData=this.options.filter(item=>item.text.includes(this.searchVal));
-      const newLen=this.panelData.length;
-      if(newLen){
-        this.initOptions=false;
+  handleInput(evt: any) {
+    if (this.searchVal) {
+      this.panelData = this.options.filter((item: any) =>
+        item.text.includes(this.searchVal)
+      );
+      const newLen = this.panelData.length;
+      if (newLen) {
+        this.initOptions = false;
       }
-    }else{
-      this.panelData=this.options;
+    } else {
+      this.panelData = this.options;
     }
   }
   //处理被选中的样式
-  handlerActive(item:any){
-    return this.selected.map(item=>item.text).includes(item.text);
+  handlerActive(item: any) {
+    return this.selected.map((item: any) => item.text).includes(item.text);
   }
   //处理复选框值
-  private handleChecked(bool: Boolean) {
-    let lastIdx = this.selected.length - 1;
-    let lastSelected = this.selected[lastIdx];
+  private handleChecked(bool: boolean) {
+    const lastIdx = this.selected.length - 1;
+    const lastSelected = this.selected[lastIdx];
     if (lastSelected) {
-       lastSelected["checked"] = !bool;
+      lastSelected["checked"] = !bool;
     }
   }
   //反选的数据处理
@@ -138,29 +145,29 @@ export default class extends Vue {
     return valCopy;
   }
   //处理正选和反选的逻辑
-   private handleValCopy(item: any) {
+  private handleValCopy(item: any) {
     const valCopy = this.handleVal();
-    const index=valCopy.indexOf(item.text);
-    const len=this.selected.length;
+    const index = valCopy.indexOf(item.text);
+    const len = this.selected.length;
     if (~index) {
       item.checked = false;
-      this.selected.splice(index,len-index);
+      this.selected.splice(index, len - index);
       this.handleChecked(false);
     } else {
-       this.handleCheckedToTrue(item);
+      this.handleCheckedToTrue(item);
     }
   }
-  
+
   //处理是否需要正选反选
-  handleChoice(item:any){
-    if(this.reverseChoice){
-       this.handleValCopy(item);      //如果需要就开启,是否需要反选的功能。
-    }else{
+  handleChoice(item: any) {
+    if (this.reverseChoice) {
+      this.handleValCopy(item); //如果需要就开启,是否需要反选的功能。
+    } else {
       this.handleCheckedToTrue(item);
     }
   }
   //处理正选
-  handleCheckedToTrue(item:any){
+  handleCheckedToTrue(item: any) {
     this.handleChecked(true);
     item.checked = true;
     this.selected[this.level] = item;
@@ -168,29 +175,28 @@ export default class extends Vue {
   //点击处理
   private onClickText(item: any, evt: any) {
     this.handleChoice(item);
-    this.selected.splice(this.level+1); //如果第一位被换了，那么第二会要删除，实现切换数据视图一致的效果
-    if(item.checked && item.children && item.children.length){
+    this.selected.splice(this.level + 1); //如果第一位被换了，那么第二会要删除，实现切换数据视图一致的效果
+    if (item.checked && item.children && item.children.length) {
       this.handleChidlrenZero(item.children);
     }
     this.$emit("update:selected", this.selected);
-    this.initOptions=true;
+    this.initOptions = true;
   }
 
   //选择默认每一级的第一位选中
-  handleChidlrenZero(item:any){
-    const arr=[item[0]];
-    while(arr.length){
-      const item=arr.shift();
+  handleChidlrenZero(item: any) {
+    const arr = [item[0]];
+    while (arr.length) {
+      const item = arr.shift();
       this.selected.push(item);
-      if(item.children){
+      if (item.children) {
         this.handleChidlrenZero(item.children);
       }
     }
   }
-  //因为selectedItem的children值的checked为fasle，所以传过去的就是false 了
   get showRightItem() {
-    if(this.initOptions){
-      let selectedItem = this.selected[this.level];
+    if (this.initOptions) {
+      const selectedItem = this.selected[this.level];
       if (
         selectedItem &&
         selectedItem.children &&
@@ -198,14 +204,15 @@ export default class extends Vue {
       ) {
         return selectedItem.children;
       }
+      return null;
     }
   }
 
   //监听
-  @Watch('options',{deep:true,immediate:true})
-  handleOptions(newVal:any){
-    if(!this.searchVal){
-        this.panelData=newVal;
+  @Watch("options", { deep: true, immediate: true })
+  handleOptions(newVal: any) {
+    if (!this.searchVal) {
+      this.panelData = newVal;
     }
   }
 }
@@ -225,13 +232,13 @@ export default class extends Vue {
     box-sizing: border-box;
     margin: 5px;
     border: 1px solid #dddddd;
-    .search{
+    .search {
       padding: 5px;
-      /deep/.el-input__inner{
+      /deep/.el-input__inner {
         width: 185px;
       }
     }
-    .item-content{
+    .item-content {
       height: 100%;
       width: 100%;
       overflow: auto;
@@ -244,8 +251,8 @@ export default class extends Vue {
     .cursor {
       cursor: pointer;
     }
-    .active{
-      border-right:3px solid #009919 ;
+    .active {
+      border-right: 3px solid #009919;
       background: #eee;
     }
   }

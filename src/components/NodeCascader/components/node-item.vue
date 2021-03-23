@@ -4,11 +4,9 @@
       <label>{{ node.text }}</label>
     </div>
     <div v-if="node.children" class="sub-item">
-        <div v-for="(item, index) in node.children" v-bind:key="index">
-          <nodeItem
-            :node="item"
-          ></nodeItem>
-        </div>
+      <div v-for="(item, index) in node.children" v-bind:key="index">
+        <nodeItem :node="item"></nodeItem>
+      </div>
     </div>
   </div>
 </template>
@@ -19,31 +17,31 @@ import {
   Ref,
   Prop,
   Vue,
-  Watch,
+  Watch
 } from "vue-property-decorator";
 @Component({
-  name: "nodeItem",
+  name: "nodeItem"
 })
 export default class extends Vue {
   @Prop({
-    type:Object,
-    default:()=>{}
+    type: Object,
+    default: () => {}
   })
-  node:any;
-  mounted(){
-    console.log(this.node)
+  node: any;
+  mounted() {
+    console.log(this.node);
   }
 }
 </script>
 <style lang="scss" scoped>
-.node-item{
+.node-item {
   display: flex;
-  .node-label{
+  .node-label {
     width: 180px;
     padding: 5px;
     font-size: 14px;
   }
-  .sub-item{
+  .sub-item {
     display: flex;
     flex-direction: column;
   }
